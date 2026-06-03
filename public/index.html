@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVibe IPTV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 15L15 12L10 9V15Z" fill="url(#paint0_linear)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="3" y1="5" x2="21" y2="19" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FF3366"/>
+                            <stop offset="1" stop-color="#FF9933"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>StreamVibe</h1>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="m3u-url" placeholder="Enter .m3u URL…" />
+                <button id="load-btn"><span>Load Playlist</span></button>
+            </div>
+
+            <!-- Settings toggle -->
+            <button id="settings-btn" class="icon-btn" title="Buffer &amp; Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Settings panel (hidden by default) -->
+        <div id="settings-panel" class="settings-panel hidden">
+            <div class="settings-row">
+                <label for="buffer-slider">
+                    Buffer size
+                    <span class="settings-hint">Increase for unstable connections, decrease for lower latency</span>
+                </label>
+                <div class="slider-group">
+                    <span class="slider-val">5s</span>
+                    <input type="range" id="buffer-slider" min="5" max="60" value="15" step="5">
+                    <span class="slider-val">60s</span>
+                    <span class="buffer-target"><span id="buffer-display">15</span>s target</span>
+                </div>
+            </div>
+        </div>
+
+        <main class="app-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Channels</h2>
+                    <span id="channel-count" class="badge">0</span>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-channels" placeholder="Search channels…" />
+                </div>
+                <div id="channel-list" class="channel-list">
+                    <div class="empty-state">
+                        <p>No channels loaded. Enter a valid M3U playlist URL above.</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Player -->
+            <section class="player-container">
+                <div class="video-wrapper">
+                    <video id="video-player" controls autoplay></video>
+
+                    <div id="loading-overlay" class="loading-overlay hidden">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <!-- Live buffer badge -->
+                    <div class="video-hud">
+                        <span id="buffer-badge" class="buffer-badge">—</span>
+                        <span class="hud-label">buf</span>
+                    </div>
+                </div>
+
+                <div class="current-channel-info hidden" id="current-channel-info">
+                    <img id="current-channel-logo" src="" alt="Channel Logo" class="channel-logo-large" />
+                    <div class="info-text">
+                        <h2 id="current-channel-name">Channel Name</h2>
+                        <p id="current-channel-group">Group</p>
+                    </div>
+                    <!-- Connection status -->
+                    <div class="stream-status">
+                        <span id="status-dot" class="status-dot"></span>
+                        <span id="status-text" class="status-text">—</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
