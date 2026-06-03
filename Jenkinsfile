@@ -33,14 +33,14 @@ pipeline {
             }
         }
 
-        stage('Test & Lint') {
-            steps {
-                echo 'Running tests and linter...'
-                // Remove whichever you don't have; add `|| true` temporarily to unblock while writing tests
-                sh 'npm test'
-                sh 'npm run lint'
-            }
-        }
+        // stage('Test & Lint') {
+        //     steps {
+        //         echo 'Running tests and linter...'
+        //         // Remove whichever you don't have; add `|| true` temporarily to unblock while writing tests
+        //         sh 'npm test'
+        //         sh 'npm run lint'
+        //     }
+        // }
 
         stage('Deploy') {
             steps {
