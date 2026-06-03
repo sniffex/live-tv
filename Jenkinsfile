@@ -29,7 +29,7 @@ pipeline {
             steps {
                 echo 'Installing dependencies...'
                 // Install ALL dependencies (including dev) so we can run tests and linter
-                sh 'npm ci'
+                sh 'npm install'
             }
         }
 

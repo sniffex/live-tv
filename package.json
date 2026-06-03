@@ -4,7 +4,9 @@
   "description": "IPTV Web App with Custom User-Agent",
   "main": "server.js",
   "scripts": {
-    "start": "node --watch server.js"
+    "start": "node --watch server.js",
+    "test": "node --test",
+    "lint": "echo 'No linter configured yet' || true"
   },
   "dependencies": {
     "cors": "^2.8.5",
