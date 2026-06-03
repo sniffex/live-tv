@@ -6,6 +6,8 @@ pipeline {
         // Changing this to a directory inside the Jenkins user's home folder
         // because Jenkins doesn't have permission to write to /var/www/ by default.
         DEPLOY_DIR = "${HOME}/live-tv-deploy"
+        // Force Jenkins to use the standard PM2 daemon instead of creating hidden ones
+        PM2_HOME = "/var/lib/jenkins/.pm2"
     }
 
     stages {

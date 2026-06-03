@@ -62,7 +62,17 @@ const server = http.createServer(async (req, res) => {
       }
 
       const contentType = response.headers.get('content-type') || 'application/octet-stream';
-      const outHeaders = { 'Content-Type': contentType };
+      
+      // We must explicitly tell the browser NOT to cache proxy responses, 
+      // otherwise HLS.js will keep loading the same cached .m3u8 playlist 
+      // and the video will loop infinitely!
+      const outHeaders = { 
+        'Content-Type': contentType,
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      };
+      
       const contentLength = response.headers.get('content-length');
       const contentRange = response.headers.get('content-range');
       if (contentLength) outHeaders['Content-Length'] = contentLength;
