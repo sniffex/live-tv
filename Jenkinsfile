@@ -45,11 +45,7 @@ pipeline {
                     
                     # Restart the app with PM2, or start it if it's not running
                     # We name the process 'live-tv'
-                    pm2 restart live-tv || pm2 start server.js --name "live-tv"
-                    
-
-                    pm2 ps
-
+                    pm2 kill all && pm2 start server.js --name "live-tv" && pm2 ps && pm2 save
                     # We must use --nostream otherwise Jenkins will hang forever waiting for logs!
                     pm2 logs --nostream --lines 15
                     echo "Deployment Complete!"
