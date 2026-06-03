@@ -2,10 +2,10 @@ pipeline {
     // This tells Jenkins to run this pipeline on any available agent/node
     agent any
 
-    // Environment variables can be defined here if needed
     environment {
-        // Change this to the actual directory where you want the app to live on the Jenkins server
-        DEPLOY_DIR = '/var/www/live-tv'
+        // Changing this to a directory inside the Jenkins user's home folder
+        // because Jenkins doesn't have permission to write to /var/www/ by default.
+        DEPLOY_DIR = "${HOME}/live-tv-deploy"
     }
 
     stages {
