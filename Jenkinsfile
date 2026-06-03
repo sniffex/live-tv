@@ -28,8 +28,8 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                // npm ci is faster and stricter than npm install — uses package-lock.json exactly
-                sh 'npm ci --omit=dev'
+                // Install ALL dependencies (including dev) so we can run tests and linter
+                sh 'npm ci'
             }
         }
 
